@@ -32,26 +32,32 @@
   "hotPaths": [
     {
       "path": "CLAUDE.md",
-      "accessCount": 1,
-      "lastAccessed": 1779012599826,
+      "accessCount": 3,
+      "lastAccessed": 1779015823133,
+      "type": "file"
+    },
+    {
+      "path": "routines/morning-briefing.md",
+      "accessCount": 3,
+      "lastAccessed": 1779015988886,
+      "type": "file"
+    },
+    {
+      "path": "routines/evening-briefing.md",
+      "accessCount": 3,
+      "lastAccessed": 1779015996666,
+      "type": "file"
+    },
+    {
+      "path": "routines/standup-draft.md",
+      "accessCount": 2,
+      "lastAccessed": 1779023889956,
       "type": "file"
     },
     {
       "path": "config/user-profile.md",
       "accessCount": 1,
       "lastAccessed": 1779012600745,
-      "type": "file"
-    },
-    {
-      "path": "routines/morning-briefing.md",
-      "accessCount": 1,
-      "lastAccessed": 1779012615549,
-      "type": "file"
-    },
-    {
-      "path": "routines/evening-briefing.md",
-      "accessCount": 1,
-      "lastAccessed": 1779012621987,
       "type": "file"
     }
   ],
