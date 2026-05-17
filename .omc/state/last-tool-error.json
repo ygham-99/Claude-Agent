@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"GIT_EDITOR=true git rebase --continue && git push\",\"description\":\"Continue rebase and push to remote\"}",
+  "error": "Exit code 1\nYou must edit all merge conflicts and then\nmark them as resolved using git add",
+  "timestamp": "2026-05-18T08:06:49.373Z",
+  "retry_count": 3
+}
