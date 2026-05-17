@@ -1,0 +1,59 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1779011836646,
+  "projectRoot": "/Users/miridih/Desktop/Claude Agent",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {},
+  "hotPaths": [
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 1,
+      "lastAccessed": 1779012599826,
+      "type": "file"
+    },
+    {
+      "path": "config/user-profile.md",
+      "accessCount": 1,
+      "lastAccessed": 1779012600745,
+      "type": "file"
+    },
+    {
+      "path": "routines/morning-briefing.md",
+      "accessCount": 1,
+      "lastAccessed": 1779012615549,
+      "type": "file"
+    },
+    {
+      "path": "routines/evening-briefing.md",
+      "accessCount": 1,
+      "lastAccessed": 1779012621987,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
