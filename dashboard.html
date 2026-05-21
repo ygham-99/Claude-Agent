@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Dashboard — ygham</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary:       #e60023;
+  --canvas:        #ffffff;
+  --surface-soft:  #fbfbf9;
+  --surface-card:  #f6f6f3;
+  --secondary-bg:  #e5e5e0;
+  --hairline:      #dadad3;
+  --hairline-soft: #e5e5e0;
+  --ink:           #000000;
+  --charcoal:      #262622;
+  --body:          #33332e;
+  --mute:          #62625b;
+  --ash:           #91918c;
+  --stone:         #c8c8c1;
+  --on-dark:       #ffffff;
+  --rounded-md:    16px;
+  --rounded-full:  9999px;
+  --sp-xs:  6px;
+  --sp-md:  12px;
+  --sp-lg:  16px;
+  --sp-xl:  24px;
+  --sp-xxl: 32px;
+}
+
+html { font-size: 16px; }
+body {
+  background: var(--surface-soft);
+  color: var(--body);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px; font-weight: 400; line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Nav */
+.nav {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--canvas);
+  border-bottom: 1px solid var(--hairline);
+  height: 64px;
+  display: flex; align-items: center;
+  padding: 0 var(--sp-xxl); gap: var(--sp-xl);
+}
+.nav-logo {
+  width: 32px; height: 32px; border-radius: var(--rounded-full);
+  background: var(--primary); color: var(--on-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; flex-shrink: 0;
+}
+.nav-title { font-size: 16px; font-weight: 600; color: var(--ink); }
+.nav-sub   { font-size: 14px; color: var(--mute); }
+.nav-gap   { flex: 1; }
+.nav-right { display: flex; align-items: center; gap: var(--sp-lg); }
+.status-pill {
+  display: flex; align-items: center; gap: var(--sp-xs);
+  font-size: 12px; font-weight: 500; color: var(--mute);
+}
+.status-dot {
+  width: 7px; height: 7px; border-radius: var(--rounded-full);
+  background: #1a9e5f;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+.date-chip {
+  font-size: 12px; color: var(--mute);
+  background: var(--surface-card);
+  border-radius: var(--rounded-full);
+  padding: 5px 14px;
+}
+
+/* Page */
+.page {
+  max-width: 800px; margin: 0 auto;
+  padding: var(--sp-xxl) var(--sp-xxl) 80px;
+}
+
+/* Feed bar */
+.feed-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--sp-lg);
+}
+.feed-filters { display: flex; gap: var(--sp-xs); flex-wrap: wrap; }
+.feed-filter {
+  font-size: 13px; font-weight: 600;
+  background: var(--canvas); color: var(--mute);
+  border: 1px solid var(--hairline); border-radius: var(--rounded-full);
+  padding: 6px 16px; cursor: pointer; transition: all .12s;
+}
+.feed-filter:hover { background: var(--secondary-bg); color: var(--ink); }
+.feed-filter.active { background: var(--ink); color: var(--on-dark); border-color: var(--ink); }
+.feed-refresh {
+  font-size: 13px; font-weight: 500; color: var(--mute);
+  background: var(--canvas); border: 1px solid var(--hairline);
+  border-radius: var(--rounded-full); padding: 6px 14px; cursor: pointer;
+  transition: all .12s; flex-shrink: 0;
+}
+.feed-refresh:hover { color: var(--ink); border-color: var(--ash); }
+
+/* Feed list */
+.feed-list { display: flex; flex-direction: column; gap: 10px; }
+
+.feed-card {
+  background: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: var(--rounded-md);
+  overflow: hidden;
+}
+.feed-card.unread { border-left: 3px solid var(--primary); }
+
+.feed-card-head {
+  display: flex; align-items: center; gap: var(--sp-lg);
+  padding: var(--sp-lg) var(--sp-xl);
+  border-bottom: 1px solid var(--hairline-soft);
+}
+.feed-avatar {
+  width: 36px; height: 36px; border-radius: var(--rounded-full);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; flex-shrink: 0;
+}
+.feed-avatar.todd  { background: #e8f0fb; color: #2563eb; }
+.feed-avatar.jamie { background: #ecfdf5; color: #059669; }
+.feed-avatar.andy  { background: #fffbeb; color: #d97706; }
+
+.feed-meta { flex: 1; }
+.feed-title { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.feed-time  { font-size: 12px; color: var(--mute); margin-top: 3px; }
+.feed-unread-dot {
+  width: 8px; height: 8px; border-radius: var(--rounded-full);
+  background: var(--primary); flex-shrink: 0;
+}
+
+.feed-body { padding: var(--sp-xl) var(--sp-xxl); }
+.msg-body  { font-size: 14px; color: var(--body); line-height: 2.1; }
+
+/* Message token styles */
+.s-bold  { font-weight: 700; color: var(--ink); }
+.s-code  {
+  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+  font-size: 12px; background: var(--secondary-bg);
+  border-radius: 4px; padding: 1px 6px; color: var(--charcoal);
+}
+.s-link  { color: var(--primary); font-weight: 600; }
+.s-quote {
+  display: block;
+  border-left: 3px solid var(--hairline); padding-left: var(--sp-md);
+  color: var(--mute); font-size: 12px; margin: 4px 0;
+}
+.s-sig { color: var(--ash); font-style: italic; }
+
+/* Empty state */
+.feed-empty {
+  text-align: center; padding: 80px 0;
+  font-size: 14px; color: var(--stone);
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">P</div>
+  <div>
+    <div class="nav-title">Agent Dashboard</div>
+    <div class="nav-sub">ygham · 에디터 스쿼드</div>
+  </div>
+  <div class="nav-gap"></div>
+  <div class="nav-right">
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      <span id="unread-label">로딩 중…</span>
+    </div>
+    <div class="date-chip" id="date-chip">—</div>
+  </div>
+</nav>
+
+<main class="page">
+
+  <div class="feed-bar">
+    <div class="feed-filters">
+      <button class="feed-filter active" onclick="setFeedFilter('all', this)">전체</button>
+      <button class="feed-filter" onclick="setFeedFilter('todd', this)">토드</button>
+      <button class="feed-filter" onclick="setFeedFilter('jamie', this)">제이미</button>
+      <button class="feed-filter" onclick="setFeedFilter('andy', this)">앤디</button>
+    </div>
+    <button class="feed-refresh" onclick="loadFeed()">↺ 새로고침</button>
+  </div>
+
+  <div class="feed-list" id="feed-list">
+    <div class="feed-empty">메시지를 불러오는 중…</div>
+  </div>
+
+</main>
+
+<script>
+function x(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+(function() {
+  const d = new Date();
+  const days = ['일','월','화','수','목','금','토'];
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('date-chip').textContent =
+    `${d.getFullYear()}. ${p(d.getMonth()+1)}. ${p(d.getDate())}. (${days[d.getDay()]})`;
+})();
+
+let feedFilter = 'all';
+
+function setFeedFilter(f, btn) {
+  feedFilter = f;
+  document.querySelectorAll('.feed-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFeed();
+}
+
+function updateNavLabel() {
+  const el = document.getElementById('unread-label');
+  if (!el) return;
+  const feed = window.AGENT_FEED;
+  if (!feed) { el.textContent = '에이전트 3개 활성'; return; }
+  const unread = feed.filter(e => !e.read).length;
+  el.textContent = unread > 0 ? `미확인 ${unread}개` : '에이전트 3개 활성';
+}
+
+function relativeTime(iso) {
+  const d = new Date(iso), now = new Date();
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60)    return '방금';
+  if (diff < 3600)  return Math.floor(diff / 60) + '분 전';
+  if (diff < 86400) return Math.floor(diff / 3600) + '시간 전';
+  return Math.floor(diff / 86400) + '일 전';
+}
+
+function agentLabel(a) {
+  return { todd:'토드', jamie:'제이미', andy:'앤디' }[a] || a;
+}
+
+function renderToken(t) {
+  if (t.t === 'bold')  return `<span class="s-bold">${x(t.v)}</span>`;
+  if (t.t === 'text')  return x(t.v);
+  if (t.t === 'code')  return `<span class="s-code">${x(t.v)}</span>`;
+  if (t.t === 'link')  return `<span class="s-link">${x(t.v)}</span>`;
+  if (t.t === 'quote') return `<span class="s-quote">${x(t.v)}</span>`;
+  if (t.t === 'sig')   return `<span class="s-sig">${x(t.v)}</span>`;
+  if (t.t === 'br')    return '<br>';
+  return '';
+}
+
+function renderFeed() {
+  const container = document.getElementById('feed-list');
+  const feed = window.AGENT_FEED;
+
+  if (!feed || !Array.isArray(feed) || feed.length === 0) {
+    container.innerHTML = '<div class="feed-empty">아직 받은 메시지가 없습니다.</div>';
+    updateNavLabel();
+    return;
+  }
+
+  const filtered = feedFilter === 'all' ? feed : feed.filter(e => e.agent === feedFilter);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="feed-empty">${agentLabel(feedFilter)} 메시지가 없습니다.</div>`;
+    updateNavLabel();
+    return;
+  }
+
+  const initials = { todd:'T', jamie:'J', andy:'A' };
+
+  container.innerHTML = filtered.map(entry => `
+    <div class="feed-card${entry.read ? '' : ' unread'}">
+      <div class="feed-card-head">
+        <div class="feed-avatar ${entry.agent}">${initials[entry.agent] || '?'}</div>
+        <div class="feed-meta">
+          <div class="feed-title">${x(entry.title)}</div>
+          <div class="feed-time">${agentLabel(entry.agent)} · ${relativeTime(entry.sentAt)}</div>
+        </div>
+        ${!entry.read ? '<div class="feed-unread-dot"></div>' : ''}
+      </div>
+      <div class="feed-body">
+        <div class="msg-body">${entry.body.map(renderToken).join('')}</div>
+      </div>
+    </div>`).join('');
+
+  updateNavLabel();
+}
+
+function loadFeed() {
+  const old = document.getElementById('feed-script');
+  if (old) old.remove();
+  const s = document.createElement('script');
+  s.id = 'feed-script';
+  s.src = 'agent-feed.js?t=' + Date.now();
+  s.onload = renderFeed;
+  s.onerror = () => { window.AGENT_FEED = window.AGENT_FEED || []; renderFeed(); };
+  document.head.appendChild(s);
+}
+
+loadFeed();
+setInterval(loadFeed, 5 * 60 * 1000);
+</script>
+</body>
+</html>

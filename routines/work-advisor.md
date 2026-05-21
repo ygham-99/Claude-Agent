@@ -14,8 +14,29 @@
 
 ## 임무
 
-매 2시간마다, 활성 Jira 티켓과 관련 Slack 스레드를 확인합니다.
+활성 Jira 티켓과 관련 Slack 스레드를 확인합니다.
 **새로운 맥락이 생겼을 때만** 어드바이저 브리핑을 전송합니다. 조용하면 아무것도 하지 않습니다.
+
+---
+
+## STEP 0: 상태 로드
+
+`notes/andy-state.json`을 읽습니다.
+
+```json
+{
+  "lastCheckAt": "마지막으로 체크한 시각 (ISO 8601 KST)",
+  "seenCommentIds": { "ISSUE-KEY": ["comment-id-1", ...] },
+  "lastBriefedAt": { "ISSUE-KEY": "마지막 브리핑 전송 시각" }
+}
+```
+
+파일이 없거나 읽기 실패 시 초기값 사용:
+- `lastCheckAt`: 현재 시각 - 2시간
+- `seenCommentIds`: `{}`
+- `lastBriefedAt`: `{}`
+
+이후 모든 "최근 활동" 기준은 **`lastCheckAt` 이후**입니다. "최근 2시간"이라는 고정 창 대신 이 값을 씁니다.
 
 ---
 
@@ -36,8 +57,9 @@ ORDER BY updated DESC
 
 각 이슈에 대해 **병렬로** 다음을 확인합니다:
 
-- **Jira**: 최근 2시간 내 새 댓글, 상태 변경, 담당자 변경 여부
-- **Slack**: 이슈 키(예: CPPD-1392)로 검색, 최근 2시간 내 새 메시지·스레드 여부
+- **Jira**: `lastCheckAt` 이후 새 댓글, 상태 변경, 담당자 변경 여부
+  - 댓글 ID가 `seenCommentIds[ISSUE-KEY]`에 이미 있으면 **무시**합니다 (중복 방지)
+- **Slack**: 이슈 키(예: CPPD-1392)로 검색, `lastCheckAt` 이후 새 메시지·스레드 여부
 
 유의미한 새 활동이 없는 이슈는 건너뜁니다.
 
@@ -53,7 +75,7 @@ ORDER BY updated DESC
 - 이슈가 2일 이상 상태 변화 없이 정체 중일 때
 
 **전송하지 않는 경우:**
-- 최근 2시간 내 유의미한 새 활동이 없을 때
+- `lastCheckAt` 이후 유의미한 새 활동이 없을 때
 - 단순 구현 진행 상황 업데이트 (PD 액션 불필요)
 
 ---
@@ -95,3 +117,24 @@ PD가 오늘 해야 할 가장 중요한 액션 1개. 구체적으로.
 채널, 그룹, 다른 사용자에게 절대 전송 금지.
 
 처리할 이슈가 없으면 아무것도 전송하지 않습니다.
+
+---
+
+## STEP 6: 상태 저장
+
+전송 여부와 관계없이 항상 `notes/andy-state.json`을 업데이트합니다.
+
+```json
+{
+  "lastCheckAt": "<현재 시각 ISO 8601 KST>",
+  "seenCommentIds": {
+    "<ISSUE-KEY>": ["<이번에 확인한 모든 댓글 ID>", "...기존 목록에 추가"]
+  },
+  "lastBriefedAt": {
+    "<ISSUE-KEY>": "<브리핑을 전송한 경우 현재 시각, 전송 안 했으면 기존 값 유지>"
+  }
+}
+```
+
+- `seenCommentIds`는 누적합니다. 기존 ID 목록에 이번 ID를 추가합니다.
+- 이슈가 Done/완료 상태가 되면 해당 이슈 키를 `seenCommentIds`와 `lastBriefedAt`에서 제거합니다.
